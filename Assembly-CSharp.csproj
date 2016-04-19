@@ -45,8 +45,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\ZombieAnimator.cs" />
-     <Compile Include="Assets\ZombieController.cs" />
+     <Compile Include="Assets\Scripts\ZombieAnimator.cs" />
+     <Compile Include="Assets\Scripts\ZombieController.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>/Applications/Unity/Unity.app/Contents/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
