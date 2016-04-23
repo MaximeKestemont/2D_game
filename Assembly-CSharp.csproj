@@ -49,6 +49,7 @@
      <Compile Include="Assets\Scripts\CameraController.cs" />
      <Compile Include="Assets\Scripts\CatController.cs" />
      <Compile Include="Assets\Scripts\CatCreator.cs" />
+     <Compile Include="Assets\Scripts\CatUpdater.cs" />
      <Compile Include="Assets\Scripts\EnemyController.cs" />
      <Compile Include="Assets\Scripts\ScreenRelativePosition.cs" />
      <Compile Include="Assets\Scripts\ZombieAnimator.cs" />

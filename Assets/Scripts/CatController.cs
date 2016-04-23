@@ -7,13 +7,14 @@ public class CatController : MonoBehaviour {
 	private float moveSpeed; 
 	private float turnSpeed; 
 	private bool isZombie;
+	private Vector3 targetPosition;
 
 
 	void Update () {
 	  
 	  if(isZombie) {
 	    Vector3 currentPosition = transform.position;            
-	    Vector3 moveDirection = followTarget.position - currentPosition;
+	    Vector3 moveDirection = targetPosition - currentPosition;
 	 
 	    float targetAngle = Mathf.Atan2(moveDirection.y, moveDirection.x) * Mathf.Rad2Deg;
 	    transform.rotation = Quaternion.Slerp( transform.rotation, 
@@ -32,11 +33,15 @@ public class CatController : MonoBehaviour {
 	  }
 	}
 
+	public void UpdateTargetPosition() {
+	  targetPosition = followTarget.position;
+	}	
+
 	void mkKillCat(){
 		DestroyObject( gameObject );
 	}
 
-	void OnBecameInvisible() {
+	public void OnBecameInvisible() {
 		if ( !isZombie ) Destroy( gameObject ); 
 	}
 
@@ -44,15 +49,18 @@ public class CatController : MonoBehaviour {
 
 		// Update the cat position so that it matches the zombie one
   		this.followTarget = followTarget;
-  		this.moveSpeed = moveSpeed;
+  		this.moveSpeed = moveSpeed * 2f;
   		this.turnSpeed = turnSpeed;
+  		targetPosition = followTarget.position;
  
   		isZombie = true;
 
+ 		Transform cat = transform.GetChild(0);
+ 		
 		// Disable the collider so that it is only hit once
-  		GetComponent<Collider2D>().enabled = false;
+  		cat.GetComponent<Collider2D>().enabled = false;
 
   		// Trigger the animation
-  		GetComponent<Animator>().SetBool( "InConga", true );
+		cat.GetComponent<Animator>().SetBool( "InConga", true );
 	}
 }
