@@ -8,6 +8,9 @@ public class ZombieController : MonoBehaviour {
 	public float moveSpeed;
 	public float turnSpeed;
 
+	public AudioClip enemyContactSound;
+	public AudioClip catContactSound;
+
 	private Vector3 moveDirection;
 
 	[SerializeField]
@@ -15,6 +18,11 @@ public class ZombieController : MonoBehaviour {
 	private int currentColliderIndex = 0;
 
 	private List<Transform> congaLine = new List<Transform>();
+
+	private bool isInvincible = false;
+	private float timeSpentInvincible;
+
+	private int lives = 3;
 
 	// Use this for initialization
 	void Start () {
@@ -49,6 +57,18 @@ public class ZombieController : MonoBehaviour {
             );
 
 		EnforceBounds();
+
+		if (isInvincible) {
+			timeSpentInvincible += Time.deltaTime;
+		 
+		  	if (timeSpentInvincible < 3f) {
+		    	float remainder = timeSpentInvincible % .3f;
+		    	GetComponent<Renderer>().enabled = remainder > .15f; 			// make the zombie blink every 0.15s
+		  	} else {
+		    	GetComponent<Renderer>().enabled = true;
+		    	isInvincible = false;
+		  	}
+		}
 	}
 
 
@@ -90,13 +110,37 @@ public class ZombieController : MonoBehaviour {
 
 	void OnTriggerEnter2D( Collider2D other ) {
 		Debug.Log ("Hit " + other.gameObject);
-	  	if(other.CompareTag("cat")) {
+	  	if ( other.CompareTag( "cat" ) ) {
+	  		GetComponent<AudioSource>().PlayOneShot(catContactSound);
 	  		Transform followTarget = congaLine.Count == 0 ? transform : congaLine[congaLine.Count-1];
 			other.transform.parent.GetComponent<CatController>().JoinConga( followTarget, moveSpeed, turnSpeed );
 	  		congaLine.Add( other.transform );
-		}
-		else if (other.CompareTag("enemy")) {
-  			Debug.Log ("Pardon me, ma'am.");
+	  		
+	  		// win condition 
+	  		if (congaLine.Count >= 5) {
+  				Debug.Log("You won!");
+  				Application.LoadLevel("WinScene");
+			}
+		
+		} else if( !isInvincible && other.CompareTag( "enemy" ) ) {
+			GetComponent<AudioSource>().PlayOneShot(enemyContactSound);
+
+			// lose condition
+			if (--lives <= 0) {
+  				Debug.Log("You lost!");
+  				Application.LoadLevel("LoseScene");
+			}
+
+  			isInvincible = true;
+  			timeSpentInvincible = 0;
+			
+			// Remove the last 2 cats in the line
+			for( int i = 0; i < 2 && congaLine.Count > 0; i++ ) {
+			  	int lastIdx = congaLine.Count-1;
+			  	Transform cat = congaLine[ lastIdx ];
+			  	congaLine.RemoveAt(lastIdx);
+			  	cat.parent.GetComponent<CatController>().ExitConga();
+			}
 		}
 	}
 

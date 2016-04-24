@@ -14,7 +14,11 @@ public class CatUpdater : MonoBehaviour {
     	catController.UpdateTargetPosition();
   	}
 
-	void OnBecameInvisible() {
+    void OnBecameInvisible() {
   		catController.OnBecameInvisible();
-  	}
+    }
+
+    void mkKillCat() {
+      Destroy( transform.parent.gameObject );
+    } 
 }
